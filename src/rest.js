@@ -6,7 +6,7 @@ const axios = require('axios')
  * @param {boolean} testnet false as default
  */
 function Rest(testnet) {
-	this.endpoint = testnet ? 'http://localhost:8080/api/v1' : 'https://flowgateway-livenet.herokuapp.com/api/v1'
+	this.endpoint = testnet ? 'https://flowgateway-testnet.herokuapp.com/api/v1' : 'https://flowgateway-livenet.herokuapp.com/api/v1'
 	this.headers = {
 		'x-access-token': null
 	}
