@@ -5,8 +5,8 @@ const axios = require('axios')
  * @constructor
  * @param {boolean} testnet false as default
  */
-function Rest(endpoint) {
-	this.endpoint = endpoint
+function Rest(testnet) {
+	this.endpoint = testnet ? 'http://localhost:8080/api/v1' : 'https://flowgateway-livenet.herokuapp.com/api/v1'
 	this.headers = {
 		'x-access-token': null
 	}
@@ -52,12 +52,14 @@ Rest.prototype.login = async function(email, password) {
 }
 
 /**
- * Get new bitcoin address
- * @param {number} baseValue as currency
+ * Get new address with price and expiration
+ * @param {string} currency symbol 'btc' or 'eth'
+ * @param {number} baseValue as currency number
  */
-Rest.prototype.newAddress = async function(baseValue) {
+Rest.prototype.newAddress = async function(currency, baseValue) {
 	try {
 		const data = {
+			currency: currency,
 			baseValue: baseValue
 		}
 		const res = await axios({ method: 'POST', url: this.endpoint + '/newAddress', data: data, headers: this.headers })
@@ -68,12 +70,15 @@ Rest.prototype.newAddress = async function(baseValue) {
 }
 
 /**
- * Get user info
- * @param {number} baseValue
+ * Get new address
+ * @param {string} currency symbol 'btc' or 'eth'
  */
-Rest.prototype.userInfo = async function(baseValue) {
+Rest.prototype.newSimpleAddress = async function(currency) {
 	try {
-		const res = await axios({ method: 'GET', url: this.endpoint + '/userInfo',  headers: this.headers })
+		const data = {
+			currency: currency
+		}
+		const res = await axios({ method: 'POST', url: this.endpoint + '/newSimpleAddress', data: data, headers: this.headers })
 		return res.data
 	} catch (e) {
 		return e.response.data
@@ -82,11 +87,12 @@ Rest.prototype.userInfo = async function(baseValue) {
 
 /**
  * Explore address for changes
+ * @param {string} currency symbol 'btc' or 'eth'
  * @param {string} address
  */
-Rest.prototype.explore = async function(address) {
+Rest.prototype.explore = async function(currency, address) {
 	try {
-		const res = await axios({ method: 'GET', url: this.endpoint + '/explore/' + address })
+		const res = await axios({ method: 'GET', url: `${this.endpoint}/explore/${currency}/${address}` })
 		return res.data
 	} catch (e) {
 		return e.response.data

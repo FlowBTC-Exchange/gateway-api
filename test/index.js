@@ -1,11 +1,17 @@
 const Rest = require('../src/index')
 
 const fun = async () => {
-	const Flow = new Rest('https://flowgateway-testnet.herokuapp.com/api/v1')
+	const Flow = new Rest(true)
 
-	const Login = await Flow.login('email@gmail.com', '123456')
+	const Login = await Flow.login('anderson.juhasc@gmail.com', '123456')
 
-	console.log(Login)
+	if (Login.success) {
+		const newAddress = await Flow.newSimpleAddress('eth')
+		console.log(newAddress)
+
+		const explore = await Flow.explore('eth', newAddress.address)
+		console.log(explore)
+	}
 }
 
 fun()
